@@ -1,0 +1,4 @@
+node_modules
+.git
+nohup.out
+log

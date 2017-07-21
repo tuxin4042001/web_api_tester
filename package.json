@@ -1,0 +1,20 @@
+{
+  "name": "TCP_Server",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {
+    "loadtest": "^2.3.0",
+    "mongoose": "^4.10.5",
+    "nodemailer": "^4.0.1",
+    "sleep": "^5.1.1",
+    "then-request": "^3.2.0"
+  },
+  "author": "Evan Riegel",
+  "Copyright": "Appropolis Inc.",
+  "devDependencies": {
+    "mocha": "^3.2.0"
+  }
+}
