@@ -7,24 +7,25 @@ let config = require('./config/config.js');
 let nodemailer = require('nodemailer');
 let loadtest = require('loadtest');
 
-let doLoadtest = false;
+let doLoadtest = true;
 let doMonitortest = true;
+let error = "";
 
-// let urlPrefix = "http://10.10.10.7:8100/api/lora";
-// let deviceType = "/plugbase";
-// let applicationID = "/0000000000000001";
-// let urlSuffix = "/currentstatus";
-// let url = urlPrefix + deviceType + applicationID + urlSuffix;
-// let queryContent = "deviceStatuses";
-
+//////////////////////////////////////////////////////////////////////////////
+//                  CONFIG FOR LOAD TESTER
+//////////////////////////////////////////////////////////////////////////////
 // let loadtestUrl = "http://10.10.10.7:8100/api/lora/plugbase/0000000000000001currentstatus";
 // let loadtestMethod = "GET";
 // let loadtestMaxRequest = 1000;
 // let loadtestMaxseconds = 50;
 // let loadtestConcurrency = 20;
-
-
-let error = "";
+let loadtestConfig = config.loadtestConfig.loraDevCtrl;
+let loadtestUrl = "http://" + config.hostMachine + ":" + config.webApiPortNum + "/api/lora/" + loadtestConfig.devicetype + "/" + loadtestConfig.applicationID + "/" + "currentstatus";
+let loadtestQuery = loadtestUrl + "?dev_eui=" + loadtestConfig.devEUI;
+let loadtestMethod = loadtestConfig.loadtestMethod;
+let loadtestMaxRequest = loadtestConfig.loadtestMaxRequest;
+let loadtestMaxseconds = loadtestConfig.loadtestMaxseconds;
+let loadtestConcurrency = loadtestConfig.loadtestConcurrency;
 
 if (doLoadtest) {
     //-----------------------------------------------------------------------------------------------------
@@ -38,6 +39,9 @@ if (doLoadtest) {
 
     };
     loadtest.loadTest(options, function (error, result) {
+        console.log("tese for: " + loadtestUrl);
+        console.log(loadtestConfig);
+
         if (result.totalErrors > 0) {
             error = 'Got Errors: ' + result.totalErrors;
             console.error(error);
@@ -49,25 +53,40 @@ if (doLoadtest) {
     });
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//                  CONFIG FOR LOAD MONITOR
+//////////////////////////////////////////////////////////////////////////////
+// let urlPrefix = "http://10.10.10.7:8100/api/lora";
+// let deviceType = "/plugbase";
+// let applicationID = "/0000000000000001";
+// let urlSuffix = "/currentstatus";
+// let url = urlPrefix + deviceType + applicationID + urlSuffix;
+// let queryContent = "deviceStatuses";
+
+let dataMonitorConfig = config.dataMonitorConfig.loraDevCtrl;
+let dataMonitorUrl = "http://" + config.hostMachine + ":" + config.webApiPortNum + "/api/lora/" + dataMonitorConfig.devicetype + "/" + dataMonitorConfig.applicationID + "/" + "currentstatus";
+let dataMonitorQuery = dataMonitorUrl + "?dev_eui=" + dataMonitorConfig.devEUI;
+let dataMonitorQueryContent = dataMonitorConfig.queryContent;
+
 if (doMonitortest) {
     //-----------------------------------------------------------------------------------------------------
     //------------- MONITOR SECTION------------------------------------------------------------------------
     setTimeout(function mainLoop() {
-        request("GET", url).then((resp) => {
+        request("GET", dataMonitorUrl).then((resp) => {
             let response = JSON.parse(resp.body.toString());
-            if (resp.statusCode === 404 || response[queryContent] === undefined) {
+            if (resp.statusCode === 404 || response[dataMonitorQueryContent] === undefined) {
                 if (resp.statusCode === 404) {
                     error = "404 Error, cannot find this page!";
                     console.log(error);
                     sendMail(error);
-                } else if (response.queryContent === undefined) {
-                    error = response.queryContent + " is empty!";
-                    console.log(response.queryContent + " is empty!");
+                } else if (response.dataMonitorQueryContent === undefined) {
+                    error = response.dataMonitorQueryContent + " is empty!";
+                    console.log(response.dataMonitorQueryContent + " is empty!");
                     sendMail(error);
                 }
                 sendMail();
             } else {
-                console.log(url + ' query successful!');
+                console.log(dataMonitorUrl + ' query successful!');
                 console.log(response);
             }
         });
