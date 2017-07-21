@@ -20,14 +20,11 @@ if(config.acceptedEnvironments.includes(config.environment) == false)
     throw new Error("Error: Invalid environment name. Please check your config file.");
 
 //LOADTESTER CONFIG
-let loadtestConfig = {
+config.loadtestConfig = {
     loraDevCtrl: {
         devEUI: "",
         devicetype: "plugbase",
         applicationID: 0000000000000001,
-        loadtestUrl: "http://" + config.hostMachine + "/" + config.hostMachine + "/api/lora/" + loadtestConfig.loraDevCtrl.devicetype + 
-             "/" + loatestConfig.loraDevCtrl.applicationID + "/" + "currentstatus",
-        loadtestQuery: loadtestUrl + "?dev_eui=" + loadtestConfig.loraDevCtrl.devEUI,
         loadtestMethod: "GET",
         loadtestMaxRequest: 1000,
         loadtestMaxseconds: 50,
@@ -36,14 +33,13 @@ let loadtestConfig = {
 }
 
 //MONITOR CONFIG
-let dataMonitorConfig = {
+config.testInterval = 5000;
+config.dataMonitorConfig = {
     loraDevCtrl: {
         devEUI: "",
         devicetype: "plugbase",
         applicationID: 0000000000000001,
-        monitorUrl: "http://" + config.hostMachine + "/" + config.hostMachine + "/api/lora/" + loadtestConfig.loraDevCtrl.devicetype +
-        "/" + loatestConfig.loraDevCtrl.applicationID + "/" + "currentstatus",
-        monitorQuery: loadtestUrl + "?dev_eui=" + loadtestConfig.loraDevCtrl.devEUI
+        queryContent: "deviceStatuses"
     }
 }
 
